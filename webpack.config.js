@@ -1,21 +1,38 @@
 const path = require('path')
-const HTMLPlugin = require("html-webpack-plugin")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
+    mode: "development",
     entry: {
         index: "./src/index.js"
     },
-    mode: "production",
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+      },
+    devServer: {
+        static: {
+          directory: path.resolve(__dirname, 'dist'),
+        },
+        port: 8080,
+        open: true,
+        hot: true,
+        compress: true,
+        historyApiFallback: true,
+      },
     module: {
         rules: [
             {
-                exclude: /node_modules/,
+                test: /\.(js|jsx)$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader',
+                options: { presets: ['@babel/env','@babel/preset-react'] },
+              },
+              {
                 test: /\.css$/i,
-                 use: [
-                    "style-loader",
-                    "css-loader"
-                 ]
+                include: path.resolve(__dirname, 'src'),
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
               },
         ]
     },
@@ -25,10 +42,13 @@ module.exports = {
                 { from: "manifest.json", to: "../manifest.json" },
             ],
         }),
-        ...getHtmlPlugins(["index"]),
+        new HtmlWebpackPlugin({
+            title: "Application name",
+            template: './src/index.html'
+        })
     ],
     resolve: {
-        extensions: [".tsx", ".ts", ".js"],
+        extensions: [".jsx", ".ts", ".js"],
     },
     output: {
         path: path.join(__dirname, "dist/js"),
@@ -36,13 +56,13 @@ module.exports = {
     },
 }
 
-function getHtmlPlugins(chunks) {
-    return chunks.map(
-        (chunk) =>
-            new HTMLPlugin({
-                title: "wishco extension",
-                filename: `${chunk}.html`,
-                chunks: [chunk],
-            })
-    );
-}
+// function getHtmlPlugins(chunks) {
+//     return chunks.map(
+//         (chunk) =>
+//             new HTMLPlugin({
+//                 title: "wishco extension",
+//                 filename: `${chunk}.html`,
+//                 chunks: [chunk],
+//             })
+//     );
+// }
