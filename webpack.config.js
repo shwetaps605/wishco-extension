@@ -43,26 +43,12 @@ module.exports = {
             ],
         }),
         new HtmlWebpackPlugin({
-            title: "Application name",
+            title: "wishco",
             template: './src/index.html'
         })
     ],
     resolve: {
         extensions: [".jsx", ".ts", ".js"],
     },
-    output: {
-        path: path.join(__dirname, "dist/js"),
-        filename: "[name].js",
-    },
 }
 
-// function getHtmlPlugins(chunks) {
-//     return chunks.map(
-//         (chunk) =>
-//             new HTMLPlugin({
-//                 title: "wishco extension",
-//                 filename: `${chunk}.html`,
-//                 chunks: [chunk],
-//             })
-//     );
-// }
